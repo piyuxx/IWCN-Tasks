@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editable Table with React</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div id="root"></div>
+
+    <!-- React and ReactDOM development scripts -->
+    <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
+    <!-- Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <!-- Babel Standalone for JSX transpilation -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/6.26.0/babel.min.js"></script>
+
+    <script type="text/babel">
+        // Functional component for the editable table row
+        const TableRow = ({ data, isHeader, handleCellEdit }) => {
+            // Function to handle input change and enforce character limit
+            const handleInputChange = (e) => {
+                const inputText = e.target.textContent.slice(0, 8); // Limit to 8 characters
+                e.target.textContent = inputText;
+            };
+
+            return (
+                <tr>
+                    {data.map((item, index) => (
+                        <td key={index} style={{ width: isHeader ? (index === 0 ? '15%' : 'auto') : 'auto', color: isHeader ? (index === 0 ? 'darkgrey' : 'gray') : 'black' }} contentEditable={isHeader || index === 0 ? false : true} onBlur={(e) => handleCellEdit(e, index)} onInput={handleInputChange}>{item}</td>
+                    ))}
+                </tr>
+            );
+        };
+
+        // Functional component for the editable table
+        const EditableTable = () => {
+            const [data, setData] = React.useState([
+                ['Month1', 'Outgoing Call', 'User Requirement'],
+                ['January', '', ''],
+                ['February', '', ''],
+                // Add more rows as needed
+            ]);
+
+            // Update the value in state when a cell is edited
+            const handleCellEdit = (e, rowIndex, columnIndex) => {
+                if (rowIndex !== 0 && columnIndex!==0) {
+                    const newData = [...data];
+                    const newValue = e.target.textContent.slice(0, 8); // Limit to 8 characters
+                    newData[rowIndex][columnIndex] = newValue;
+                    setData(newData);
+                }
+            };
+
+            return (
+                <table className="table table-bordered">
+                    <tbody>
+                        {data.map((row, index) => (
+                            <TableRow
+                                key={index}
+                                data={row}
+                                isHeader={index === 0}
+                                handleCellEdit={(e, columnIndex) => handleCellEdit(e, index, columnIndex)}
+                            />
+                        ))}
+                    </tbody>
+                </table>
+            );
+        };
+
+        // Render the EditableTable component
+        ReactDOM.render(<EditableTable />, document.getElementById('root'));
+    </script>
+</body>
+</html>

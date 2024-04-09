@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>React Example</title>
+</head>
+<body>
+  <div id="root"></div>
+
+  <!-- Include React and ReactDOM from CDN -->
+  <script src="https://unpkg.com/react@17/umd/react.development.js"></script>
+  <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js"></script>
+
+  <script>
+    const App = () => {
+      const [phoneNumber, setPhoneNumber] = React.useState('');
+      const [responseHeaders, setResponseHeaders] = React.useState(null);
+      const [responseMessage, setResponseMessage] = React.useState('');
+
+      const handleSubmit = async (e) => {
+        e.preventDefault();
+
+        try {
+          const response = await fetch('https://chimpu.xyz/api/post.php', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ phonenumber: phoneNumber })
+          });
+
+          const headersArray = Array.from(response.headers.entries());
+          setResponseHeaders(headersArray);
+          
+          const responseBody = await response.json();
+          setResponseMessage(responseBody.msg);
+        } catch (error) {
+          console.error('Error:', error);
+        }
+      };
+
+      return (
+        React.createElement('div', null,
+          React.createElement('h1', null, 'Post Data to API Endpoint'),
+          React.createElement('form', { onSubmit: handleSubmit },
+            React.createElement('label', null,
+              'Phone Number:',
+              React.createElement('input', {
+                type: 'text',
+                value: phoneNumber,
+                onChange: (e) => setPhoneNumber(e.target.value)
+              })
+            ),
+            React.createElement('button', { type: 'submit' }, 'Submit')
+          ),
+          responseHeaders && (
+            React.createElement('div', null,
+              React.createElement('h2', null, 'Response Headers:'),
+              React.createElement('ul', null,
+                responseHeaders.map(([key, value], index) => (
+                  React.createElement('li', { key: index },
+                    React.createElement('strong', null, key),
+                    ': ',
+                    value
+                  )
+                ))
+              )
+            )
+          ),
+          responseMessage && (
+            React.createElement('div', null,
+              React.createElement('h2', null, 'Response Message:'),
+              React.createElement('p', null, responseMessage)
+            )
+          )
+        )
+      );
+    };
+
+    ReactDOM.render(
+      React.createElement(App),
+      document.getElementById('root')
+    );
+  </script>
+</body>
+</html>

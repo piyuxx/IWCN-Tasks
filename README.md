@@ -5,6 +5,7 @@ Usage:
 Clone the repository:  git clone https://github.com/your-username/react-frontend-tasks.git
 
 Navigate to each task directory: cd task1
+
 Install dependencies: npm install
 
 

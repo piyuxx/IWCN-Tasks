@@ -8,5 +8,7 @@ Navigate to each task directory: cd task1
 
 Install dependencies: npm install
 
+Run the tasks.
+
 
 
